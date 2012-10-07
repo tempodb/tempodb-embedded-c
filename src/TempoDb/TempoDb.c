@@ -1,4 +1,4 @@
-#include "TempoDb.h"
+#include "tempodb.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -12,31 +12,31 @@ static char accessSecret[ACCESS_KEY_SIZE + 1] = {0};
 static int sock;
 static struct sockaddr_in *addr;
 static char *ip;
-static void TempoDb_Send(const char *command);
+static void tempodb_send(const char *command);
 
-static struct sockaddr_in * TempoDb_Addr(void);
-static int TempoDb_CreateSocket(struct sockaddr_in *addr);
-static char * TempoDb_GetIp(char *host);
+static struct sockaddr_in * tempodb_addr(void);
+static int tempodb_create_socket(struct sockaddr_in *addr);
+static char * tempodb_getip(char *host);
 
-void TempoDb_Create(const char *key, const char *secret)
+void tempodb_create(const char *key, const char *secret)
 {
   strncpy(accessKey, key, ACCESS_KEY_SIZE);
   strncpy(accessSecret, secret, ACCESS_KEY_SIZE);
 
-  addr = TempoDb_Addr();
-  sock = TempoDb_CreateSocket(addr);
+  addr = tempodb_addr();
+  sock = tempodb_create_socket(addr);
 }
 
-void TempoDb_Destroy(void)
+void tempodb_destroy(void)
 {
   free(addr);
   free(ip);
 }
 
-static struct sockaddr_in * TempoDb_Addr(void) {
+static struct sockaddr_in * tempodb_addr(void) {
   int addr_result;
   struct sockaddr_in *remote;
-  ip = TempoDb_GetIp(DOMAIN);
+  ip = tempodb_getip(DOMAIN);
 
   remote = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in *));
   remote->sin_family = AF_INET;
@@ -55,7 +55,7 @@ static struct sockaddr_in * TempoDb_Addr(void) {
   return remote;
 }
 
-void TempoDb_BuildQuery(char *buffer, const size_t buffer_size, const char *verb, const char *path, const char *payload) {
+void tempodb_build_query(char *buffer, const size_t buffer_size, const char *verb, const char *path, const char *payload) {
   char accessCredentials[ACCESS_KEY_SIZE*2 + 2];
   char *encodedCredentials;
   snprintf(accessCredentials, strlen(accessKey) + strlen(accessSecret) + 2, "%s:%s", accessKey, accessSecret);
@@ -65,7 +65,7 @@ void TempoDb_BuildQuery(char *buffer, const size_t buffer_size, const char *verb
   free(encodedCredentials);
 }
 
-static int TempoDb_CreateSocket(struct sockaddr_in *addr) {
+static int tempodb_create_socket(struct sockaddr_in *addr) {
   int sock;
   if((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0){
     perror("Can't create TCP socket");
@@ -78,7 +78,7 @@ static int TempoDb_CreateSocket(struct sockaddr_in *addr) {
   return sock;
 }
 
-static char * TempoDb_GetIp(char *host)
+static char * tempodb_getip(char *host)
 {
   struct hostent *hent;
   int iplen = 16;
@@ -97,7 +97,7 @@ static char * TempoDb_GetIp(char *host)
   return ip;
 }
 
-static void TempoDb_Send(const char *query) {
+static void tempodb_send(const char *query) {
   int sent = 0;
   int sent_part;
 
@@ -111,15 +111,15 @@ static void TempoDb_Send(const char *query) {
   }
 }
 
-void TempoDb_WriteById(const char *seriesName, const float value) {
+void tempodb_write_by_id(const char *seriesName, const float value) {
   char *queryBuffer = (char *)malloc(255);
   char path[255];
   char bodyBuffer[255];
 
   snprintf(path, 255, "/v1/series/key/%s/data", seriesName);
   snprintf(bodyBuffer, 255, "[{\"v\":%f}]", value);
-  TempoDb_BuildQuery(queryBuffer, 255, POST, path, bodyBuffer);
-  TempoDb_Send(queryBuffer);
+  tempodb_build_query(queryBuffer, 255, POST, path, bodyBuffer);
+  tempodb_send(queryBuffer);
 
   free(queryBuffer);
 }

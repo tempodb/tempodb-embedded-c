@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void TempoDb_Create(const char *key, const char *secret);
-void TempoDb_Destroy(void);
+void tempodb_create(const char *key, const char *secret);
+void tempodb_destroy(void);
 
-void TempoDb_BuildQuery(char *buffer, const size_t buffer_size, const char *verb, const char *path, const char *payload);
-void TempoDb_WriteById(const char *seriesName, const float value);
+void tempodb_build_query(char *buffer, const size_t buffer_size, const char *verb, const char *path, const char *payload);
+void tempodb_write_by_id(const char *seriesName, const float value);
 
 #define ACCESS_KEY_SIZE 32
 
