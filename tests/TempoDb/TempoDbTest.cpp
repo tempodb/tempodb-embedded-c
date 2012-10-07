@@ -20,11 +20,31 @@ TEST_GROUP(tempodb) {
   }
 };
 
-TEST(tempodb, WriteByKey)
+TEST(tempodb, WriteByKey_Request)
 {
-  tempodb_write_by_id("series_id", 10);
+  char *response_buffer = (char *)malloc(255);
+  tempodb_write_by_id("series_id", 10, response_buffer, 255);
   STRCMP_CONTAINS("POST /v1/series/key/series_id/data", last_request);
   STRCMP_CONTAINS("[{\"v\":10.000000}]", last_request);
+  free(response_buffer);
+}
+
+TEST(tempodb, WriteByKey_Response)
+{
+  char *response_buffer = (char *)malloc(255);
+  set_test_response("200 OK");
+  tempodb_write_by_id("series_id", 10, response_buffer, 255);
+  STRCMP_CONTAINS("200 OK", response_buffer);
+  free(response_buffer);
+}
+
+TEST(tempodb, WriteByKey_Response)
+{
+  char *response_buffer = (char *)malloc(255);
+  set_test_response("200 OK");
+  tempodb_write_by_id("series_id", 10, response_buffer, 255);
+  STRCMP_CONTAINS("200 OK", response_buffer);
+  free(response_buffer);
 }
 
 TEST(tempodb, BuildQuery_IncludesHTTPVerbPathAndVersion)
