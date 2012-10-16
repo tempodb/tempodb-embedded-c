@@ -24,7 +24,7 @@ TEST(tempodb, WriteByKey_Request)
 {
   char *response_buffer = (char *)malloc(255);
   tempodb_write_by_id("series_id", 10, response_buffer, 255);
-  STRCMP_CONTAINS("POST /v1/series/key/series_id/data", last_request);
+  STRCMP_CONTAINS("POST /v1/series/id/series_id/data", last_request);
   STRCMP_CONTAINS("[{\"v\":10.000000}]", last_request);
   free(response_buffer);
 }
@@ -69,7 +69,7 @@ TEST(tempodb, BuildQuery_IncludesUserAgent)
 {
   char *buffer = (char *)malloc(255);
   tempodb_build_query(buffer, 255, "GET", "/a/path", "");
-  STRCMP_CONTAINS("\nUser-Agent: tempodb-embedded-c/1.0.0\n", buffer);
+  STRCMP_CONTAINS("\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\n", buffer);
   free(buffer);
 }
 
@@ -77,7 +77,7 @@ TEST(tempodb, BuildQuery_IncludesHost)
 {
   char *buffer = (char *)malloc(255);
   tempodb_build_query(buffer, 255, "GET", "/a/path", "");
-  STRCMP_CONTAINS("\nHost: api.tempo-db.com\n", buffer);
+  STRCMP_CONTAINS("\r\nHost: api.tempo-db.com\r\n", buffer);
   free(buffer);
 }
 
@@ -85,7 +85,7 @@ TEST(tempodb, BuildQuery_IncludesPayload)
 {
   char *buffer = (char *)malloc(255);
   tempodb_build_query(buffer, 255, "GET", "/a/path", "[{\"a\":1,\"b\":2}]");
-  STRCMP_CONTAINS("\n\n[{\"a\":1,\"b\":2}]\n", buffer);
+  STRCMP_CONTAINS("\r\n\r\n[{\"a\":1,\"b\":2}]", buffer);
   free(buffer);
 }
 
@@ -93,6 +93,6 @@ TEST(tempodb, BuildQuery_IncludesCredentials)
 {
   char *buffer = (char *)malloc(255);
   tempodb_build_query(buffer, 255, "GET", "/a/path", "");
-  STRCMP_CONTAINS("\nAuthorization: Basic bXlfYWNjZXNzX2tleTpteV9zZWNyZXRfa2V5\n", buffer);
+  STRCMP_CONTAINS("\r\nAuthorization: Basic bXlfYWNjZXNzX2tleTpteV9zZWNyZXRfa2V5\r\n", buffer);
   free(buffer);
 }
