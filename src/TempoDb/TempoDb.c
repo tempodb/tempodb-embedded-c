@@ -14,8 +14,10 @@ static struct sockaddr_in *addr;
 static char *ip;
 static void tempodb_send(const char *command);
 static void tempodb_read_response(char *buffer, const int buffer_size);
+
 static void tempodb_write(const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size);
 static void tempodb_write_by_path(const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size);
+void tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path);
 
 static struct sockaddr_in * tempodb_addr(void);
 static int tempodb_create_socket(struct sockaddr_in *addr);
@@ -130,8 +132,15 @@ static void tempodb_send(const char *query) {
   }
 }
 
-void tempodb_bulk_write(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
+void tempodb_bulk_increment(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
+  tempodb_bulk_update(updates, update_count, response_buffer, response_buffer_size, "/v1/increment");
+}
 
+void tempodb_bulk_write(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
+  tempodb_bulk_update(updates, update_count, response_buffer, response_buffer_size, "/v1/data");
+}
+
+void tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path) {
   char *query_buffer = (char *)malloc(512);
   char body_buffer[255];
   char *body_buffer_head = body_buffer;
@@ -153,7 +162,7 @@ void tempodb_bulk_write(const struct tempodb_bulk_update *updates, ssize_t updat
 
   snprintf(body_buffer_head, body_buffer_size_remaining, "]}");
 
-  tempodb_build_query(query_buffer, 512, POST, "/v1/data", body_buffer);
+  tempodb_build_query(query_buffer, 512, POST, path, body_buffer);
 
   tempodb_write(query_buffer, response_buffer, response_buffer_size);
 
