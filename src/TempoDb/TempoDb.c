@@ -7,8 +7,8 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-static char accessKey[ACCESS_KEY_SIZE + 1] = {0};
-static char accessSecret[ACCESS_KEY_SIZE + 1] = {0};
+static char access_key[ACCESS_KEY_SIZE + 1] = {0};
+static char access_secret[ACCESS_KEY_SIZE + 1] = {0};
 static int sock;
 static struct sockaddr_in *addr;
 static char *ip;
@@ -22,8 +22,8 @@ static char * tempodb_getip(char *host);
 
 void tempodb_create(const char *key, const char *secret)
 {
-  strncpy(accessKey, key, ACCESS_KEY_SIZE);
-  strncpy(accessSecret, secret, ACCESS_KEY_SIZE);
+  strncpy(access_key, key, ACCESS_KEY_SIZE);
+  strncpy(access_secret, secret, ACCESS_KEY_SIZE);
 
   addr = tempodb_addr();
   sock = tempodb_create_socket(addr);
@@ -58,13 +58,13 @@ static struct sockaddr_in * tempodb_addr(void) {
 }
 
 void tempodb_build_query(char *buffer, const size_t buffer_size, const char *verb, const char *path, const char *payload) {
-  char accessCredentials[ACCESS_KEY_SIZE*2 + 2];
-  char *encodedCredentials;
-  snprintf(accessCredentials, strlen(accessKey) + strlen(accessSecret) + 2, "%s:%s", accessKey, accessSecret);
-  encodedCredentials = encode_base64(strlen(accessCredentials), (unsigned char *)accessCredentials);
+  char access_credentials[ACCESS_KEY_SIZE*2 + 2];
+  char *encoded_credentials;
+  snprintf(access_credentials, strlen(access_key) + strlen(access_secret) + 2, "%s:%s", access_key, access_secret);
+  encoded_credentials = encode_base64(strlen(access_credentials), (unsigned char *)access_credentials);
 
-  snprintf(buffer, buffer_size, "%s %s HTTP/1.0\r\nAuthorization: Basic %s\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\nHost: %s\r\nContent-Length: %ld\r\nContent-Type: application/json\r\n\r\n%s", verb, path, encodedCredentials, DOMAIN, strlen(payload), payload);
-  free(encodedCredentials);
+  snprintf(buffer, buffer_size, "%s %s HTTP/1.0\r\nAuthorization: Basic %s\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\nHost: %s\r\nContent-Length: %ld\r\nContent-Type: application/json\r\n\r\n%s", verb, path, encoded_credentials, DOMAIN, strlen(payload), payload);
+  free(encoded_credentials);
 }
 
 static int tempodb_create_socket(struct sockaddr_in *addr) {
@@ -129,18 +129,18 @@ static void tempodb_send(const char *query) {
   }
 }
 
-void tempodb_write_by_id(const char *seriesId, const float value, char *response_buffer, const ssize_t response_buffer_size) {
-  char *queryBuffer = (char *)malloc(512);
+void tempodb_write_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+  char *query_buffer = (char *)malloc(512);
   char path[255];
-  char bodyBuffer[255];
+  char body_buffer[255];
 
-  snprintf(path, 255, "/v1/series/id/%s/data", seriesId);
-  snprintf(bodyBuffer, 255, "[{\"v\":%f}]", value);
-  tempodb_build_query(queryBuffer, 512, POST, path, bodyBuffer);
+  snprintf(path, 255, "/v1/series/id/%s/data", series_id);
+  snprintf(body_buffer, 255, "[{\"v\":%f}]", value);
+  tempodb_build_query(query_buffer, 512, POST, path, body_buffer);
 
-  tempodb_write(queryBuffer, response_buffer, response_buffer_size);
+  tempodb_write(query_buffer, response_buffer, response_buffer_size);
 
-  free(queryBuffer);
+  free(query_buffer);
 }
 
 void tempodb_write(const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size) {
