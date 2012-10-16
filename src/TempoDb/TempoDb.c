@@ -130,6 +130,36 @@ static void tempodb_send(const char *query) {
   }
 }
 
+void tempodb_bulk_write(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
+
+  char *query_buffer = (char *)malloc(512);
+  char body_buffer[255];
+  char *body_buffer_head = body_buffer;
+  ssize_t body_buffer_size_remaining = 254;
+  int chars_printed;
+  int i;
+
+  sprintf(body_buffer_head, "{\"data\":[");
+  body_buffer_head += strlen(body_buffer_head);
+
+  /* two closing characters */
+  body_buffer_size_remaining -= strlen(body_buffer_head) - 2;
+
+  for (i = 0; i < update_count; i++) {
+    chars_printed = snprintf(body_buffer_head, body_buffer_size_remaining, "{\"%s\":\"%s\",\"v\":%f},", updates[i].id_or_key, updates[i].series, (float)updates[i].value);
+    body_buffer_size_remaining -= chars_printed;
+    body_buffer_head += chars_printed;
+  }
+
+  snprintf(body_buffer_head, body_buffer_size_remaining, "]}");
+
+  tempodb_build_query(query_buffer, 512, POST, "/v1/data", body_buffer);
+
+  tempodb_write(query_buffer, response_buffer, response_buffer_size);
+
+  free(query_buffer);
+}
+
 void tempodb_increment_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/id/%s/increment", series_id);

@@ -20,6 +20,23 @@ TEST_GROUP(tempodb) {
   }
 };
 
+TEST(tempodb, BulkWrite_Request)
+{
+  char *response_buffer = (char *)malloc(255);
+
+  struct tempodb_bulk_update *updates = (struct tempodb_bulk_update *)malloc(sizeof(struct tempodb_bulk_update) * 2);
+  struct tempodb_bulk_update update_by_id = { "series_1_id", ID, 1.1};
+  updates[0] = update_by_id;
+  struct tempodb_bulk_update update_by_key = { "series_2_key", KEY, 2};
+  updates[1] = update_by_key;
+
+  tempodb_bulk_write(updates, 2, response_buffer, 255);
+  STRCMP_CONTAINS("POST /v1/data", last_request);
+  STRCMP_CONTAINS("{\"data\":[{\"id\":\"series_1_id\",\"v\":1.000000},{\"key\":\"series_2_key\",\"v\":2.000000},]}", last_request);
+  free(response_buffer);
+  free(updates);
+}
+
 TEST(tempodb, IncrementByKey_Request)
 {
   char *response_buffer = (char *)malloc(255);

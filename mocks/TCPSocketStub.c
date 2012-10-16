@@ -5,13 +5,13 @@ static struct hostent *hent;
 static void *inet_ips;
 char *last_request;
 
-static size_t response_buffer_size = 255;
+static size_t response_buffer_size = 1024;
 static size_t response_buffer_bytes_sent;
 char *response_buffer;
 char *response_buffer_remaining;
 
 
-static int last_request_size = 255;
+static int last_request_size = 1024;
 
 int socket(int domain, int type, int protocol) {
   return 27; /* meaningless */
