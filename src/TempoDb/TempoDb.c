@@ -60,9 +60,10 @@ void tempodb_build_query(char *buffer, const size_t buffer_size, const char *ver
   char accessCredentials[ACCESS_KEY_SIZE*2 + 2];
   char *encodedCredentials;
   snprintf(accessCredentials, strlen(accessKey) + strlen(accessSecret) + 2, "%s:%s", accessKey, accessSecret);
+  printf("accessCredentials: %s\n", accessCredentials);
   encodedCredentials = encode_base64(strlen(accessCredentials), (unsigned char *)accessCredentials);
 
-  snprintf(buffer, buffer_size, "%s %s HTTP/1.0\nAuthorization: Basic %s\nUser-Agent: tempodb-embedded-c/1.0.0\nHost: %s\n\n%s\n\n", verb, path, encodedCredentials, DOMAIN, payload);
+  snprintf(buffer, buffer_size, "%s %s HTTP/1.0\r\nAuthorization: Basic %s\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\nHost: %s\r\nContent-Length: %ld\r\nContent-Type: application/json\r\n\r\n%s", verb, path, encodedCredentials, DOMAIN, strlen(payload), payload);
   free(encodedCredentials);
 }
 
@@ -129,13 +130,13 @@ static void tempodb_send(const char *query) {
 }
 
 void tempodb_write_by_id(const char *seriesName, const float value, char *response_buffer, const int response_buffer_size) {
-  char *queryBuffer = (char *)malloc(255);
+  char *queryBuffer = (char *)malloc(512);
   char path[255];
   char bodyBuffer[255];
 
   snprintf(path, 255, "/v1/series/key/%s/data", seriesName);
   snprintf(bodyBuffer, 255, "[{\"v\":%f}]", value);
-  tempodb_build_query(queryBuffer, 255, POST, path, bodyBuffer);
+  tempodb_build_query(queryBuffer, 512, POST, path, bodyBuffer);
   tempodb_send(queryBuffer);
   tempodb_read_response(response_buffer, response_buffer_size);
 
