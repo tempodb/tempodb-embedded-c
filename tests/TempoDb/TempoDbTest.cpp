@@ -96,3 +96,19 @@ TEST(tempodb, BuildQuery_IncludesCredentials)
   STRCMP_CONTAINS("\r\nAuthorization: Basic bXlfYWNjZXNzX2tleTpteV9zZWNyZXRfa2V5\r\n", buffer);
   free(buffer);
 }
+
+TEST(tempodb, BuildQuery_IncludesContentType)
+{
+  char *buffer = (char *)malloc(255);
+  tempodb_build_query(buffer, 255, "GET", "/a/path", "");
+  STRCMP_CONTAINS("\r\nContent-Type: application/json\r\n", buffer);
+  free(buffer);
+}
+
+TEST(tempodb, BuildQuery_IncludesContentLength)
+{
+  char *buffer = (char *)malloc(255);
+  tempodb_build_query(buffer, 255, "POST", "/a/path", "123456");
+  STRCMP_CONTAINS("\r\nContent-Length: 6\r\n", buffer);
+  free(buffer);
+}
