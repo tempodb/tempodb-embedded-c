@@ -20,7 +20,7 @@ TEST_GROUP(tempodb) {
   }
 };
 
-TEST(tempodb, WriteByKey_Request)
+TEST(tempodb, WriteById_Request)
 {
   char *response_buffer = (char *)malloc(255);
   tempodb_write_by_id("series_id", 10, response_buffer, 255);
@@ -29,7 +29,7 @@ TEST(tempodb, WriteByKey_Request)
   free(response_buffer);
 }
 
-TEST(tempodb, WriteByKey_Response)
+TEST(tempodb, WriteById_Response)
 {
   char *response_buffer = (char *)malloc(255);
   set_test_response("200 OK");
@@ -38,7 +38,7 @@ TEST(tempodb, WriteByKey_Response)
   free(response_buffer);
 }
 
-TEST(tempodb, WriteByKey_Response_Overrun)
+TEST(tempodb, WriteById_Response_Overrun)
 {
   char *response_buffer = (char *)malloc(255);
   memset(response_buffer, 1, 255);
