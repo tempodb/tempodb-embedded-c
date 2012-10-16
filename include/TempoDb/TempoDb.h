@@ -13,7 +13,7 @@ void tempodb_create(const char *key, const char *secret);
 void tempodb_destroy(void);
 
 void tempodb_build_query(char *buffer, const size_t buffer_size, const char *verb, const char *path, const char *payload);
-void tempodb_write_by_id(const char *seriesName, const float value, char *response_buffer, const int response_buffer_size);
+void tempodb_write_by_id(const char *seriesId, const float value, char *response_buffer, const ssize_t response_buffer_size);
 
 #define ACCESS_KEY_SIZE 32
 
