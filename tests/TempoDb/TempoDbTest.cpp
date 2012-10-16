@@ -38,12 +38,13 @@ TEST(tempodb, WriteByKey_Response)
   free(response_buffer);
 }
 
-TEST(tempodb, WriteByKey_Response)
+TEST(tempodb, WriteByKey_Response_Overrun)
 {
   char *response_buffer = (char *)malloc(255);
+  memset(response_buffer, 1, 255);
   set_test_response("200 OK");
-  tempodb_write_by_id("series_id", 10, response_buffer, 255);
-  STRCMP_CONTAINS("200 OK", response_buffer);
+  tempodb_write_by_id("series_id", 10, response_buffer, 3);
+  STRCMP_EQUAL("20", response_buffer);
   free(response_buffer);
 }
 

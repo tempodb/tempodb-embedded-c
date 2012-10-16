@@ -43,6 +43,11 @@ ssize_t recv(int socket, void *buffer, size_t size, int flags) {
     } else {
       bytes_to_send = bytes_left_in_response;;
     }
+
+    if (bytes_to_send > size) {
+      bytes_to_send = size;
+    }
+
     strncpy(buffer, response_buffer_remaining, bytes_to_send);
     response_buffer_bytes_sent += bytes_to_send;
     response_buffer_remaining += bytes_to_send;
