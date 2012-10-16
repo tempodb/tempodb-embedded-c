@@ -15,6 +15,7 @@ static char *ip;
 static void tempodb_send(const char *command);
 static void tempodb_read_response(char *buffer, const int buffer_size);
 static void tempodb_write(const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size);
+static void tempodb_write_by_path(const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size);
 
 static struct sockaddr_in * tempodb_addr(void);
 static int tempodb_create_socket(struct sockaddr_in *addr);
@@ -129,12 +130,24 @@ static void tempodb_send(const char *query) {
   }
 }
 
-void tempodb_write_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
-  char *query_buffer = (char *)malloc(512);
+void tempodb_write_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
+  snprintf(path, 255, "/v1/series/key/%s/data", series_key);
+
+  tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
+}
+
+void tempodb_write_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+  char path[255];
+  snprintf(path, 255, "/v1/series/id/%s/data", series_id);
+
+  tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
+}
+
+void tempodb_write_by_path(const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+  char *query_buffer = (char *)malloc(512);
   char body_buffer[255];
 
-  snprintf(path, 255, "/v1/series/id/%s/data", series_id);
   snprintf(body_buffer, 255, "[{\"v\":%f}]", value);
   tempodb_build_query(query_buffer, 512, POST, path, body_buffer);
 
