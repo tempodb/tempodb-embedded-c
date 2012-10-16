@@ -20,21 +20,30 @@ TEST_GROUP(tempodb) {
   }
 };
 
+TEST(tempodb, IncrementByKey_Request)
+{
+  char *response_buffer = (char *)malloc(255);
+  tempodb_increment_by_key("series_key", 10, response_buffer, 255);
+  STRCMP_CONTAINS("POST /v1/series/key/series_key/increment", last_request);
+  STRCMP_CONTAINS("[{\"v\":10.000000}]", last_request);
+  free(response_buffer);
+}
+
+TEST(tempodb, IncrementById_Request)
+{
+  char *response_buffer = (char *)malloc(255);
+  tempodb_increment_by_id("series_id", 10, response_buffer, 255);
+  STRCMP_CONTAINS("POST /v1/series/id/series_id/increment", last_request);
+  STRCMP_CONTAINS("[{\"v\":10.000000}]", last_request);
+  free(response_buffer);
+}
+
 TEST(tempodb, WriteByKey_Request)
 {
   char *response_buffer = (char *)malloc(255);
   tempodb_write_by_key("series_key", 10, response_buffer, 255);
   STRCMP_CONTAINS("POST /v1/series/key/series_key/data", last_request);
   STRCMP_CONTAINS("[{\"v\":10.000000}]", last_request);
-  free(response_buffer);
-}
-
-TEST(tempodb, WriteByKey_Response)
-{
-  char *response_buffer = (char *)malloc(255);
-  set_test_response("200 OK");
-  tempodb_write_by_key("series_key", 10, response_buffer, 255);
-  STRCMP_CONTAINS("200 OK", response_buffer);
   free(response_buffer);
 }
 
@@ -47,7 +56,7 @@ TEST(tempodb, WriteById_Request)
   free(response_buffer);
 }
 
-TEST(tempodb, WriteById_Response)
+TEST(tempodb, Write_Response)
 {
   char *response_buffer = (char *)malloc(255);
   set_test_response("200 OK");
@@ -56,7 +65,7 @@ TEST(tempodb, WriteById_Response)
   free(response_buffer);
 }
 
-TEST(tempodb, WriteById_Response_Overrun)
+TEST(tempodb, Write_Response_Overrun)
 {
   char *response_buffer = (char *)malloc(255);
   memset(response_buffer, 1, 255);

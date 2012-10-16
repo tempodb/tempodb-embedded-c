@@ -130,6 +130,20 @@ static void tempodb_send(const char *query) {
   }
 }
 
+void tempodb_increment_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+  char path[255];
+  snprintf(path, 255, "/v1/series/id/%s/increment", series_id);
+
+  tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
+}
+
+void tempodb_increment_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+  char path[255];
+  snprintf(path, 255, "/v1/series/key/%s/increment", series_key);
+
+  tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
+}
+
 void tempodb_write_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/key/%s/data", series_key);
