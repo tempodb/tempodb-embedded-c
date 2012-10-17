@@ -1,5 +1,5 @@
-#ifndef D_LightController_H
-#define D_LightController_H
+#ifndef TempoDB_H
+#define TempoDB_H
 
 #define GET "GET"
 #define POST "POST"
@@ -15,7 +15,7 @@
 struct tempodb_bulk_update {
   const char *series;
   const char *id_or_key;
-  int value;
+  float value;
 };
 
 void tempodb_create(const char *key, const char *secret);
