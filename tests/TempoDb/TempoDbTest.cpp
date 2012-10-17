@@ -32,7 +32,7 @@ TEST(tempodb, BulkIncrement_Request)
 
   tempodb_bulk_increment(updates, 2, response_buffer, 255);
   STRCMP_CONTAINS("POST /v1/increment", last_request);
-  STRCMP_CONTAINS("{\"data\":[{\"id\":\"series_1_id\",\"v\":1.000000},{\"key\":\"series_2_key\",\"v\":2.000000},]}", last_request);
+  STRCMP_CONTAINS("{\"data\":[{\"id\":\"series_1_id\",\"v\":1.100000},{\"key\":\"series_2_key\",\"v\":2.000000},]}", last_request);
   free(response_buffer);
   free(updates);
 }
@@ -49,7 +49,7 @@ TEST(tempodb, BulkWrite_Request)
 
   tempodb_bulk_write(updates, 2, response_buffer, 255);
   STRCMP_CONTAINS("POST /v1/data", last_request);
-  STRCMP_CONTAINS("{\"data\":[{\"id\":\"series_1_id\",\"v\":1.000000},{\"key\":\"series_2_key\",\"v\":2.000000},]}", last_request);
+  STRCMP_CONTAINS("{\"data\":[{\"id\":\"series_1_id\",\"v\":1.100000},{\"key\":\"series_2_key\",\"v\":2.000000},]}", last_request);
   free(response_buffer);
   free(updates);
 }
