@@ -12,12 +12,12 @@ CPP_PLATFORM = Gcc
 PROJECT_HOME_DIR = .
 
 SRC_DIRS = \
-	src/TempoDb
+	src/tempodb
 
 TEST_SRC_DIRS = \
 	.\
 	mocks\
-	tests/TempoDb\
+	tests/tempodb\
 	tests\
 
 
@@ -25,7 +25,7 @@ INCLUDE_DIRS =\
   .\
   $(CPPUTEST_HOME)/include\
   mocks\
-	include/TempoDb
+	include/tempodb
 
 MOCKS_SRC_DIRS = \
 	mocks\
