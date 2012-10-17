@@ -4,7 +4,7 @@ The [TempoDB](http://www.tempo-db.com) (Embedded) C API Client is intended for u
 
 ## Beta
 
-This library is under active development, and we are looking for feedback. If you give this it a try, [drop us a note](<patrick@tempo-db.com>). Your experience will help us with continued development, and if you have problems, we may be able to help.
+This library is under active development, and we are looking for feedback. If you give this it a try, [drop us a note](<mailto:patrick@tempo-db.com>). Your experience will help us with continued development, and if you have problems, we may be able to help.
 
 ## Timestamps
 
