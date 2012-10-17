@@ -12,12 +12,12 @@ static char access_secret[ACCESS_KEY_SIZE + 1] = {0};
 static int sock;
 static struct sockaddr_in *addr;
 static char *ip;
-static void tempodb_send(const char *command);
-static void tempodb_read_response(char *buffer, const int buffer_size);
+static int tempodb_send(const char *command);
+static int tempodb_read_response(char *buffer, const int buffer_size);
 
-static void tempodb_write(const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size);
-static void tempodb_write_by_path(const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size);
-void tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path);
+static int tempodb_write(const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size);
+static int tempodb_write_by_path(const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size);
+static int tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path);
 
 static struct sockaddr_in * tempodb_addr(void);
 static int tempodb_create_socket(struct sockaddr_in *addr);
@@ -102,9 +102,10 @@ static char * tempodb_getip(char *host)
   return ip;
 }
 
-static void tempodb_read_response(char *buffer, const int buffer_size) {
+static int tempodb_read_response(char *buffer, const int buffer_size) {
   size_t bytes_read = 0;
   size_t bytes_read_part;
+  int status = 0;
 
   size_t remaining_buffer_size = buffer_size - 1;
   char *remaining_buffer = buffer;
@@ -112,13 +113,18 @@ static void tempodb_read_response(char *buffer, const int buffer_size) {
   memset(buffer, 0, buffer_size);
 
   while ((bytes_read_part = recv(sock, remaining_buffer, remaining_buffer_size, 0)) > 0) {
+    if (bytes_read_part == -1) {
+      status = -1;
+      perror("Can't read from socket");
+    }
     bytes_read += bytes_read_part;
     remaining_buffer_size -= bytes_read_part;
     remaining_buffer += bytes_read_part;
   }
+  return status;
 }
 
-static void tempodb_send(const char *query) {
+int tempodb_send(const char *query) {
   int sent = 0;
   int sent_part;
 
@@ -126,27 +132,29 @@ static void tempodb_send(const char *query) {
     sent_part = send(sock, query + sent, strlen(query) - sent, 0);
     if (sent_part == -1) {
       perror("Can't sent query");
-      exit(1);
+      return -1;
     }
     sent += sent_part;
   }
+  return 0;
 }
 
-void tempodb_bulk_increment(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
-  tempodb_bulk_update(updates, update_count, response_buffer, response_buffer_size, "/v1/increment");
+int tempodb_bulk_increment(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
+  return tempodb_bulk_update(updates, update_count, response_buffer, response_buffer_size, "/v1/increment");
 }
 
-void tempodb_bulk_write(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
-  tempodb_bulk_update(updates, update_count, response_buffer, response_buffer_size, "/v1/data");
+int tempodb_bulk_write(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
+  return tempodb_bulk_update(updates, update_count, response_buffer, response_buffer_size, "/v1/data");
 }
 
-void tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path) {
+int tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path) {
   char *query_buffer = (char *)malloc(512);
   char body_buffer[255];
   char *body_buffer_head = body_buffer;
   ssize_t body_buffer_size_remaining = 254;
   int chars_printed;
   int i;
+  int status;
   char *type;
 
   sprintf(body_buffer_head, "{\"data\":[");
@@ -177,52 +185,58 @@ void tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t upda
 
   tempodb_build_query(query_buffer, 512, TEMPODB_POST, path, body_buffer);
 
-  tempodb_write(query_buffer, response_buffer, response_buffer_size);
+  status = tempodb_write(query_buffer, response_buffer, response_buffer_size);
 
   free(query_buffer);
+  return status;
 }
 
-void tempodb_increment_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_increment_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/id/%s/increment", series_id);
 
-  tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
+  return tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
 }
 
-void tempodb_increment_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_increment_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/key/%s/increment", series_key);
 
-  tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
+  return tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
 }
 
-void tempodb_write_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_write_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/key/%s/data", series_key);
 
-  tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
+  return tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
 }
 
-void tempodb_write_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_write_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/id/%s/data", series_id);
 
-  tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
+  return tempodb_write_by_path(path, value, response_buffer, response_buffer_size);
 }
 
-void tempodb_write_by_path(const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_write_by_path(const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char *query_buffer = (char *)malloc(512);
   char body_buffer[255];
+  int status;
 
   snprintf(body_buffer, 255, "[{\"v\":%f}]", value);
   tempodb_build_query(query_buffer, 512, TEMPODB_POST, path, body_buffer);
 
-  tempodb_write(query_buffer, response_buffer, response_buffer_size);
+  status = tempodb_write(query_buffer, response_buffer, response_buffer_size);
 
   free(query_buffer);
+  return status;
 }
 
-void tempodb_write(const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size) {
-  tempodb_send(query_buffer);
-  tempodb_read_response(response_buffer, response_buffer_size);
+int tempodb_write(const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size) {
+  int status = tempodb_send(query_buffer);
+  if (status != -1) {
+    status = tempodb_read_response(response_buffer, response_buffer_size);
+  }
+  return status;
 }
