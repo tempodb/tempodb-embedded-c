@@ -162,7 +162,7 @@ void tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t upda
 
   snprintf(body_buffer_head, body_buffer_size_remaining, "]}");
 
-  tempodb_build_query(query_buffer, 512, POST, path, body_buffer);
+  tempodb_build_query(query_buffer, 512, TEMPODB_POST, path, body_buffer);
 
   tempodb_write(query_buffer, response_buffer, response_buffer_size);
 
@@ -202,7 +202,7 @@ void tempodb_write_by_path(const char *path, const float value, char *response_b
   char body_buffer[255];
 
   snprintf(body_buffer, 255, "[{\"v\":%f}]", value);
-  tempodb_build_query(query_buffer, 512, POST, path, body_buffer);
+  tempodb_build_query(query_buffer, 512, TEMPODB_POST, path, body_buffer);
 
   tempodb_write(query_buffer, response_buffer, response_buffer_size);
 

@@ -1,16 +1,16 @@
 #ifndef TempoDB_H
 #define TempoDB_H
 
-#define GET "GET"
-#define POST "POST"
-
-#define ID "id"
-#define KEY "key"
-
 #include "base64.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define TEMPODB_GET "GET"
+#define TEMPODB_POST "POST"
+
+#define TEMPODB_ID "id"
+#define TEMPODB_KEY "key"
 
 struct tempodb_bulk_update {
   const char *series;

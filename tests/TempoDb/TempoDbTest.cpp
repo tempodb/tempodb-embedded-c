@@ -25,9 +25,9 @@ TEST(tempodb, BulkIncrement_Request)
   char *response_buffer = (char *)malloc(255);
 
   struct tempodb_bulk_update *updates = (struct tempodb_bulk_update *)malloc(sizeof(struct tempodb_bulk_update) * 2);
-  struct tempodb_bulk_update update_by_id = { "series_1_id", ID, 1.1};
+  struct tempodb_bulk_update update_by_id = { "series_1_id", TEMPODB_ID, 1.1};
   updates[0] = update_by_id;
-  struct tempodb_bulk_update update_by_key = { "series_2_key", KEY, 2};
+  struct tempodb_bulk_update update_by_key = { "series_2_key", TEMPODB_KEY, 2};
   updates[1] = update_by_key;
 
   tempodb_bulk_increment(updates, 2, response_buffer, 255);
@@ -42,9 +42,9 @@ TEST(tempodb, BulkWrite_Request)
   char *response_buffer = (char *)malloc(255);
 
   struct tempodb_bulk_update *updates = (struct tempodb_bulk_update *)malloc(sizeof(struct tempodb_bulk_update) * 2);
-  struct tempodb_bulk_update update_by_id = { "series_1_id", ID, 1.1};
+  struct tempodb_bulk_update update_by_id = { "series_1_id", TEMPODB_ID, 1.1};
   updates[0] = update_by_id;
-  struct tempodb_bulk_update update_by_key = { "series_2_key", KEY, 2};
+  struct tempodb_bulk_update update_by_key = { "series_2_key", TEMPODB_KEY, 2};
   updates[1] = update_by_key;
 
   tempodb_bulk_write(updates, 2, response_buffer, 255);
