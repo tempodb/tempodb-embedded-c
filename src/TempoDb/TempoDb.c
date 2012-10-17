@@ -147,6 +147,7 @@ void tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t upda
   ssize_t body_buffer_size_remaining = 254;
   int chars_printed;
   int i;
+  char *type;
 
   sprintf(body_buffer_head, "{\"data\":[");
   body_buffer_head += strlen(body_buffer_head);
@@ -155,7 +156,19 @@ void tempodb_bulk_update(const struct tempodb_bulk_update *updates, ssize_t upda
   body_buffer_size_remaining -= strlen(body_buffer_head) - 2;
 
   for (i = 0; i < update_count; i++) {
-    chars_printed = snprintf(body_buffer_head, body_buffer_size_remaining, "{\"%s\":\"%s\",\"v\":%f},", updates[i].id_or_key, updates[i].series, (float)updates[i].value);
+    switch(updates[i].type) {
+      case TEMPODB_ID:
+        type = "id";
+        break;
+      case TEMPODB_KEY:
+        type = "key";
+        break;
+      default:
+        perror("Invalid update type");
+        type = "";
+        break;
+    }
+    chars_printed = snprintf(body_buffer_head, body_buffer_size_remaining, "{\"%s\":\"%s\",\"v\":%f},", type, updates[i].series, (float)updates[i].value);
     body_buffer_size_remaining -= chars_printed;
     body_buffer_head += chars_printed;
   }

@@ -9,12 +9,11 @@
 #define TEMPODB_GET "GET"
 #define TEMPODB_POST "POST"
 
-#define TEMPODB_ID "id"
-#define TEMPODB_KEY "key"
+enum id_or_key {TEMPODB_ID, TEMPODB_KEY};
 
 struct tempodb_bulk_update {
   const char *series;
-  const char *id_or_key;
+  enum id_or_key type;
   float value;
 };
 
