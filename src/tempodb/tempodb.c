@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <inttypes.h>
 
 static char access_key[ACCESS_KEY_SIZE + 1] = {0};
 static char access_secret[ACCESS_KEY_SIZE + 1] = {0};
@@ -66,7 +67,7 @@ void tempodb_build_query(char *buffer, const size_t buffer_size, const char *ver
   snprintf(access_credentials, strlen(access_key) + strlen(access_secret) + 2, "%s:%s", access_key, access_secret);
   encoded_credentials = encode_base64(strlen(access_credentials), (unsigned char *)access_credentials);
 
-  snprintf(buffer, buffer_size, "%s %s HTTP/1.0\r\nAuthorization: Basic %s\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\nHost: %s\r\nContent-Length: %ld\r\nContent-Type: application/json\r\n\r\n%s", verb, path, encoded_credentials, DOMAIN, strlen(payload), payload);
+  snprintf(buffer, buffer_size, "%s %s HTTP/1.0\r\nAuthorization: Basic %s\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\nHost: %s\r\nContent-Length: %lu\r\nContent-Type: application/json\r\n\r\n%s", verb, path, encoded_credentials, DOMAIN, (unsigned long)strlen(payload), payload);
   free(encoded_credentials);
 }
 
