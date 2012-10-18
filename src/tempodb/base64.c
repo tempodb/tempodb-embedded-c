@@ -22,7 +22,6 @@
 
 #include <string.h>
 
-#include "monitor.h"
 #include "base64.h"
 
 static char encode(unsigned char u);
