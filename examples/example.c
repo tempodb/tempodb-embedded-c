@@ -10,10 +10,10 @@
  * The general strategy is:
  *
  * 1) Initialize the connection with:
- *    tempodb_create("YOUR_KEY", "YOUR_SECRET");
+ *    struct tempodb_config *config = tempodb_create("YOUR_KEY", "YOUR_SECRET");
  *
  * 2) Make one or more requests:
- *    status = tempodb_write_by_key("temperature", 45.3, response_buffer, 255);
+ *    status = tempodb_write_by_key(config, "temperature", 45.3, response_buffer, 255);
  *    if (status == -1) {
  *      perror("Error sending to tempodb:");
  *    } else {
@@ -21,7 +21,7 @@
  *    }
  *
  * 3) Free TempoDB allocations
- *    tempodb_destroy();
+ *    tempodb_destroy(config);
  *
  *
  * An important note on timestamps:
@@ -43,7 +43,7 @@
  */
 
 int main(int argc, char **argv) {
-  tempodb_create("YOUR_KEY", "YOUR_SECRET");
+  struct tempodb_config *config = tempodb_create("YOUR_KEY", "YOUR_SECRET");
 
   char *response_buffer = (char *)malloc(255);
   int status;
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
    *
    * Also available: tempodb_write_by_id, which takes an TempoDB-generated id instead of the user-specified key
    */
-  status = tempodb_write_by_key("temperature", 45.3, response_buffer, 255);
+  status = tempodb_write_by_key(config, "temperature", 45.3, response_buffer, 255);
 
   /*
    * Increment By Key
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
    *
    * Also available: tempodb_increment_by_id, which takes an TempoDB-generated id instead of the user-specified key
    */
-  status = tempodb_increment_by_key("button_clicks", 1, response_buffer, 255);
+  status = tempodb_increment_by_key(config, "button_clicks", 1, response_buffer, 255);
 
   /* Bulk Write & Bulk Increment
    *
@@ -91,8 +91,8 @@ int main(int argc, char **argv) {
   updates[1] = update2;
 
   /* use whichever makes sense for you */
-  status = tempodb_bulk_write(updates, 2, response_buffer, 255);
-  status = tempodb_bulk_increment(updates, 2, response_buffer, 255);
+  status = tempodb_bulk_write(config, updates, 2, response_buffer, 255);
+  status = tempodb_bulk_increment(config, updates, 2, response_buffer, 255);
 
   free(updates);
 
@@ -103,5 +103,5 @@ int main(int argc, char **argv) {
   }
 
   free(response_buffer);
-  tempodb_destroy();
+  tempodb_destroy(config);
 }
