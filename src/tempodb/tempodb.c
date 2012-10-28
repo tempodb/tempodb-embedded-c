@@ -136,7 +136,7 @@ int tempodb_send(tempodb_config *config, const char *query) {
   while (sent < strlen(query)) {
     sent_part = send(config->sock, query + sent, strlen(query) - sent, 0);
     if (sent_part == -1) {
-      perror("Can't sent query");
+      perror("Can't send query");
       return -1;
     }
     sent += sent_part;
