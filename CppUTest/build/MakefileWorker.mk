@@ -90,12 +90,12 @@ endif
 
 # Default dir for temporary files (d, o)
 ifndef CPPUTEST_OBJS_DIR
-    CPPUTEST_OBJS_DIR = objs
+    CPPUTEST_OBJS_DIR = objs/test
 endif
 
 # Default dir for the outout library
 ifndef CPPUTEST_LIB_DIR
-    CPPUTEST_LIB_DIR = lib
+    CPPUTEST_LIB_DIR = lib/test
 endif
 
 # No map by default
@@ -251,12 +251,8 @@ LDFLAGS = $(CPPUTEST_LDFLAGS) $(CPPUTEST_ADDITIONAL_LDFLAGS)
 
 # Targets
 
-.PHONY: all
-all: start $(TEST_TARGET)  
-	$(RUN_TEST_TARGET)	
-
 .PHONY: start
-start: $(TEST_TARGET) 
+start: $(TEST_TARGET)
 	$(SILENCE)START_TIME=$(call time)
 
 .PHONY: all_no_tests
