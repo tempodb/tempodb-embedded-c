@@ -3,3 +3,6 @@ libTempoDb_CppUTest.a
 objs/
 a.out
 examples/example-authed.c
+CppUTest/CppUTest_tests
+CppUTest/lib/libCppUTest.a
+CppUTest/lib/libCppUTestExt.a
