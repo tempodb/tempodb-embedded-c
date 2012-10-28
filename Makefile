@@ -35,7 +35,7 @@ CPPUTEST_WARNINGFLAGS = -Wall -Wswitch-default -Werror
 CPPUTEST_CFLAGS += -Wall -Wstrict-prototypes -pedantic
 LD_LIBRARIES = -lpthread
 
-STUFF_TO_CLEAN += objs/* lib/libtempodb.a
+STUFF_TO_CLEAN += objs/* objs/src/tempodb/* objs/tests/* objs/mocks/* objs/tests/tempodb/* lib/libtempodb.a
 
 CC = cc
 
