@@ -20,13 +20,13 @@ TEST_GROUP(tempodb) {
 
 TEST(tempodb, BulkIncrement_Request)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *response_buffer = (char *)malloc(255);
 
-  struct tempodb_bulk_update *updates = (struct tempodb_bulk_update *)malloc(sizeof(struct tempodb_bulk_update) * 2);
-  struct tempodb_bulk_update update_by_id = { "series_1_id", TEMPODB_ID, 1.1};
+  tempodb_bulk_update *updates = (tempodb_bulk_update *)malloc(sizeof(tempodb_bulk_update) * 2);
+  tempodb_bulk_update update_by_id = { "series_1_id", TEMPODB_ID, 1.1};
   updates[0] = update_by_id;
-  struct tempodb_bulk_update update_by_key = { "series_2_key", TEMPODB_KEY, 2};
+  tempodb_bulk_update update_by_key = { "series_2_key", TEMPODB_KEY, 2};
   updates[1] = update_by_key;
 
   tempodb_bulk_increment(config, updates, 2, response_buffer, 255);
@@ -39,13 +39,13 @@ TEST(tempodb, BulkIncrement_Request)
 
 TEST(tempodb, BulkWrite_Request)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *response_buffer = (char *)malloc(255);
 
-  struct tempodb_bulk_update *updates = (struct tempodb_bulk_update *)malloc(sizeof(struct tempodb_bulk_update) * 2);
-  struct tempodb_bulk_update update_by_id = { "series_1_id", TEMPODB_ID, 1.1};
+  tempodb_bulk_update *updates = (tempodb_bulk_update *)malloc(sizeof(tempodb_bulk_update) * 2);
+  tempodb_bulk_update update_by_id = { "series_1_id", TEMPODB_ID, 1.1};
   updates[0] = update_by_id;
-  struct tempodb_bulk_update update_by_key = { "series_2_key", TEMPODB_KEY, 2};
+  tempodb_bulk_update update_by_key = { "series_2_key", TEMPODB_KEY, 2};
   updates[1] = update_by_key;
 
   tempodb_bulk_write(config, updates, 2, response_buffer, 255);
@@ -58,7 +58,7 @@ TEST(tempodb, BulkWrite_Request)
 
 TEST(tempodb, IncrementByKey_Request)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *response_buffer = (char *)malloc(255);
   tempodb_increment_by_key(config, "series_key", 10, response_buffer, 255);
   STRCMP_CONTAINS("POST /v1/series/key/series_key/increment", last_request);
@@ -69,7 +69,7 @@ TEST(tempodb, IncrementByKey_Request)
 
 TEST(tempodb, IncrementById_Request)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *response_buffer = (char *)malloc(255);
   tempodb_increment_by_id(config, "series_id", 10, response_buffer, 255);
   STRCMP_CONTAINS("POST /v1/series/id/series_id/increment", last_request);
@@ -80,7 +80,7 @@ TEST(tempodb, IncrementById_Request)
 
 TEST(tempodb, WriteByKey_Request)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *response_buffer = (char *)malloc(255);
   tempodb_write_by_key(config, "series_key", 10, response_buffer, 255);
   STRCMP_CONTAINS("POST /v1/series/key/series_key/data", last_request);
@@ -91,7 +91,7 @@ TEST(tempodb, WriteByKey_Request)
 
 TEST(tempodb, WriteById_Request)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *response_buffer = (char *)malloc(255);
   tempodb_write_by_id(config, "series_id", 10, response_buffer, 255);
   STRCMP_CONTAINS("POST /v1/series/id/series_id/data", last_request);
@@ -102,7 +102,7 @@ TEST(tempodb, WriteById_Request)
 
 TEST(tempodb, Write_Response)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *response_buffer = (char *)malloc(255);
   set_test_response("200 OK");
   tempodb_write_by_id(config, "series_id", 10, response_buffer, 255);
@@ -113,7 +113,7 @@ TEST(tempodb, Write_Response)
 
 TEST(tempodb, Write_Response_Overrun)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *response_buffer = (char *)malloc(255);
   memset(response_buffer, 1, 255);
   set_test_response("200 OK");
@@ -125,7 +125,7 @@ TEST(tempodb, Write_Response_Overrun)
 
 TEST(tempodb, BuildQuery_IncludesHTTPVerbPathAndVersion)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   tempodb_build_query(config, buffer, 255, "GET", "/a/path", "");
   STRCMP_CONTAINS("GET /a/path HTTP/1.0", buffer);
@@ -135,7 +135,7 @@ TEST(tempodb, BuildQuery_IncludesHTTPVerbPathAndVersion)
 
 TEST(tempodb, BuildQuery_DoesNotOverrun)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   memset(buffer, 1, 255);
   tempodb_build_query(config, buffer, 10, "GET", "/a/long/path", "");
@@ -146,7 +146,7 @@ TEST(tempodb, BuildQuery_DoesNotOverrun)
 
 TEST(tempodb, BuildQuery_IncludesUserAgent)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   tempodb_build_query(config, buffer, 255, "GET", "/a/path", "");
   STRCMP_CONTAINS("\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\n", buffer);
@@ -156,7 +156,7 @@ TEST(tempodb, BuildQuery_IncludesUserAgent)
 
 TEST(tempodb, BuildQuery_IncludesHost)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   tempodb_build_query(config, buffer, 255, "GET", "/a/path", "");
   STRCMP_CONTAINS("\r\nHost: api.tempo-db.com\r\n", buffer);
@@ -166,7 +166,7 @@ TEST(tempodb, BuildQuery_IncludesHost)
 
 TEST(tempodb, BuildQuery_IncludesPayload)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   tempodb_build_query(config, buffer, 255, "GET", "/a/path", "[{\"a\":1,\"b\":2}]");
   STRCMP_CONTAINS("\r\n\r\n[{\"a\":1,\"b\":2}]", buffer);
@@ -176,7 +176,7 @@ TEST(tempodb, BuildQuery_IncludesPayload)
 
 TEST(tempodb, BuildQuery_IncludesCredentials)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   tempodb_build_query(config, buffer, 255, "GET", "/a/path", "");
   STRCMP_CONTAINS("\r\nAuthorization: Basic bXlfYWNjZXNzX2tleTpteV9zZWNyZXRfa2V5\r\n", buffer);
@@ -186,7 +186,7 @@ TEST(tempodb, BuildQuery_IncludesCredentials)
 
 TEST(tempodb, BuildQuery_IncludesContentType)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   tempodb_build_query(config, buffer, 255, "GET", "/a/path", "");
   STRCMP_CONTAINS("\r\nContent-Type: application/json\r\n", buffer);
@@ -196,7 +196,7 @@ TEST(tempodb, BuildQuery_IncludesContentType)
 
 TEST(tempodb, BuildQuery_IncludesContentLength)
 {
-  struct tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
+  tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   tempodb_build_query(config, buffer, 255, "POST", "/a/path", "123456");
   STRCMP_CONTAINS("\r\nContent-Length: 6\r\n", buffer);

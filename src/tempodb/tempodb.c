@@ -8,12 +8,12 @@
 #include <arpa/inet.h>
 #include <inttypes.h>
 
-static int tempodb_send(struct tempodb_config *config, const char *command);
-static int tempodb_read_response(struct tempodb_config *config, char *buffer, const int buffer_size);
+static int tempodb_send(tempodb_config *config, const char *command);
+static int tempodb_read_response(tempodb_config *config, char *buffer, const int buffer_size);
 
-static int tempodb_write(struct tempodb_config *config, const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size);
-static int tempodb_write_by_path(struct tempodb_config *config, const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size);
-static int tempodb_bulk_update(struct tempodb_config *config, const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path);
+static int tempodb_write(tempodb_config *config, const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size);
+static int tempodb_write_by_path(tempodb_config *config, const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size);
+static int tempodb_send_bulk_update(tempodb_config *config, const tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path);
 
 static struct sockaddr_in * tempodb_addr(void);
 static int tempodb_create_socket(void);
@@ -25,9 +25,9 @@ struct tempodb_config {
   int sock;
 };
 
-struct tempodb_config * tempodb_create(const char *key, const char *secret)
+tempodb_config * tempodb_create(const char *key, const char *secret)
 {
-  struct tempodb_config *config = (struct tempodb_config *)malloc(sizeof(struct tempodb_config));
+  tempodb_config *config = (tempodb_config *)malloc(sizeof(tempodb_config));
   config->access_key = (char *)malloc(sizeof(char) * (ACCESS_KEY_SIZE + 1));
   config->access_secret = (char *)malloc(sizeof(char) * (ACCESS_KEY_SIZE + 1));
   strncpy(config->access_key, key, ACCESS_KEY_SIZE + 1);
@@ -38,7 +38,7 @@ struct tempodb_config * tempodb_create(const char *key, const char *secret)
   return config;
 }
 
-void tempodb_destroy(struct tempodb_config *config)
+void tempodb_destroy(tempodb_config *config)
 {
   free(config->access_key);
   free(config->access_secret);
@@ -63,7 +63,7 @@ static struct sockaddr_in * tempodb_addr(void) {
   return remote;
 }
 
-void tempodb_build_query(struct tempodb_config *config, char *buffer, const size_t buffer_size, const char *verb, const char *path, const char *payload) {
+void tempodb_build_query(tempodb_config *config, char *buffer, const size_t buffer_size, const char *verb, const char *path, const char *payload) {
   char access_credentials[ACCESS_KEY_SIZE*2 + 2];
   char *encoded_credentials;
   snprintf(access_credentials, strlen(config->access_key) + strlen(config->access_secret) + 2, "%s:%s", config->access_key, config->access_secret);
@@ -107,7 +107,7 @@ static char * tempodb_getip(char *host)
   return ip;
 }
 
-static int tempodb_read_response(struct tempodb_config *config, char *buffer, const int buffer_size) {
+static int tempodb_read_response(tempodb_config *config, char *buffer, const int buffer_size) {
   size_t bytes_read = 0;
   size_t bytes_read_part;
   int status = 0;
@@ -129,7 +129,7 @@ static int tempodb_read_response(struct tempodb_config *config, char *buffer, co
   return status;
 }
 
-int tempodb_send(struct tempodb_config *config, const char *query) {
+int tempodb_send(tempodb_config *config, const char *query) {
   int sent = 0;
   int sent_part;
 
@@ -144,15 +144,15 @@ int tempodb_send(struct tempodb_config *config, const char *query) {
   return 0;
 }
 
-int tempodb_bulk_increment(struct tempodb_config *config, const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
-  return tempodb_bulk_update(config, updates, update_count, response_buffer, response_buffer_size, "/v1/increment");
+int tempodb_bulk_increment(tempodb_config *config, const tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
+  return tempodb_send_bulk_update(config, updates, update_count, response_buffer, response_buffer_size, "/v1/increment");
 }
 
-int tempodb_bulk_write(struct tempodb_config *config, const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
-  return tempodb_bulk_update(config, updates, update_count, response_buffer, response_buffer_size, "/v1/data");
+int tempodb_bulk_write(tempodb_config *config, const tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size) {
+  return tempodb_send_bulk_update(config, updates, update_count, response_buffer, response_buffer_size, "/v1/data");
 }
 
-int tempodb_bulk_update(struct tempodb_config *config, const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path) {
+int tempodb_send_bulk_update(tempodb_config *config, const tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size, const char *path) {
   char *query_buffer = (char *)malloc(512);
   char body_buffer[255];
   char *body_buffer_head = body_buffer;
@@ -196,35 +196,35 @@ int tempodb_bulk_update(struct tempodb_config *config, const struct tempodb_bulk
   return status;
 }
 
-int tempodb_increment_by_id(struct tempodb_config *config, const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_increment_by_id(tempodb_config *config, const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/id/%s/increment", series_id);
 
   return tempodb_write_by_path(config, path, value, response_buffer, response_buffer_size);
 }
 
-int tempodb_increment_by_key(struct tempodb_config *config, const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_increment_by_key(tempodb_config *config, const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/key/%s/increment", series_key);
 
   return tempodb_write_by_path(config, path, value, response_buffer, response_buffer_size);
 }
 
-int tempodb_write_by_key(struct tempodb_config *config, const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_write_by_key(tempodb_config *config, const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/key/%s/data", series_key);
 
   return tempodb_write_by_path(config, path, value, response_buffer, response_buffer_size);
 }
 
-int tempodb_write_by_id(struct tempodb_config *config, const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_write_by_id(tempodb_config *config, const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char path[255];
   snprintf(path, 255, "/v1/series/id/%s/data", series_id);
 
   return tempodb_write_by_path(config, path, value, response_buffer, response_buffer_size);
 }
 
-int tempodb_write_by_path(struct tempodb_config *config, const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_write_by_path(tempodb_config *config, const char *path, const float value, char *response_buffer, const ssize_t response_buffer_size) {
   char *query_buffer = (char *)malloc(512);
   char body_buffer[255];
   int status;
@@ -238,7 +238,7 @@ int tempodb_write_by_path(struct tempodb_config *config, const char *path, const
   return status;
 }
 
-int tempodb_write(struct tempodb_config *config, const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size) {
+int tempodb_write(tempodb_config *config, const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size) {
   int status = tempodb_send(config, query_buffer);
   if (status != -1) {
     status = tempodb_read_response(config, response_buffer, response_buffer_size);
