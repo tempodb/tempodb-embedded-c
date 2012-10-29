@@ -12,7 +12,8 @@ CPP_PLATFORM = Gcc
 PROJECT_HOME_DIR = .
 
 SRC_DIRS = \
-	src/tempodb
+	src/tempodb\
+	src/tempodb/platform
 
 TEST_SRC_DIRS = \
 	.\
