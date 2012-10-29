@@ -2,3 +2,6 @@ language: cpp
 compiler:
   - gcc
 script: cd CppUTest && make && echo "Done building CppUTest" && cd .. && pwd && make vtest
+notifications:
+  email:
+    - tech@tempo-db.com
