@@ -1,5 +1,6 @@
 tempodb_tests
 tempodb_tests.txt
+lib/libtempodb.a
 lib/test/libtempodb.a
 objs/
 a.out
