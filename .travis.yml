@@ -1,4 +1,4 @@
 language: cpp
 compiler:
   - gcc
-script: cd CppUTest && make lib/libCppUTest.a && echo "Done building CppUTest" && cd .. && pwd && make vtest
+script: cd CppUTest && make && echo "Done building CppUTest" && cd .. && pwd && make vtest
