@@ -17,6 +17,8 @@ TEST_SRC_DIRS = \
 INCLUDE_DIRS =\
   include
 
+CPPUTEST_LIB_DIR = lib
+
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk
 
 #these are a sample of the other alternative flag settings

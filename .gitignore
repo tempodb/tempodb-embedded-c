@@ -1,5 +1,6 @@
-TempoDb_CppUTest_tests
-libTempoDb_CppUTest.a
+tempodb_tests
+tempodb_tests.txt
+lib/test/libtempodb.a
 objs/
 a.out
 examples/example-authed.c
