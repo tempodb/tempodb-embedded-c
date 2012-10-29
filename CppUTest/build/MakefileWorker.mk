@@ -288,10 +288,10 @@ $(TARGET_LIB): $(OBJ)
 	$(SILENCE)ranlib $@
 
 test: $(TEST_TARGET)
-	$(RUN_TEST_TARGET) | tee $(TEST_OUTPUT)
+	$(RUN_TEST_TARGET)
 	
 vtest: $(TEST_TARGET)
-	$(RUN_TEST_TARGET) -v  | tee $(TEST_OUTPUT)
+	$(RUN_TEST_TARGET) -v
 
 $(CPPUTEST_OBJS_DIR)/%.o: %.cpp
 	@echo compiling $(notdir $<)
