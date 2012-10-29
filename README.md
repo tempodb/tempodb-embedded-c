@@ -25,24 +25,24 @@ This library provides the following functions. You can find out more information
 
 ### Setup and Teardown
 ```
-void tempodb_create(const char *key, const char *secret)
-void tempodb_destroy(void)
+tempodb_config * tempodb_create(const char *key, const char *secret);
+void tempodb_destroy(tempodb_config *config);
 ```
 
 ### Writing Values
 ```
-int tempodb_write_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size)
-int tempodb_write_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size)
+int tempodb_write_by_id(tempodb_config *config, const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size);
+int tempodb_write_by_key(tempodb_config *config, const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size);
 ```
 
 ### Incrementing Values
 ```
-int tempodb_increment_by_key(const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size)
-int tempodb_increment_by_id(const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size)
+int tempodb_increment_by_key(tempodb_config *config, const char *series_key, const float value, char *response_buffer, const ssize_t response_buffer_size);
+int tempodb_increment_by_id(tempodb_config *config, const char *series_id, const float value, char *response_buffer, const ssize_t response_buffer_size);
 ```
 
 ### Bulk/Batch Updates
 ```
-int tempodb_bulk_increment(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size);
-int tempodb_bulk_write(const struct tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size);
+int tempodb_bulk_increment(tempodb_config *config, const tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size);
+int tempodb_bulk_write(tempodb_config *config, const tempodb_bulk_update *updates, ssize_t update_count, char *response_buffer, const ssize_t response_buffer_size);
 ```
