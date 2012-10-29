@@ -49,7 +49,7 @@ static struct sockaddr_in * tempodb_addr(void) {
   struct sockaddr_in *remote;
   char *ip = tempodb_getip(DOMAIN);
 
-  remote = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in *));
+  remote = (struct sockaddr_in *)malloc(sizeof(struct sockaddr_in));
   remote->sin_family = AF_INET;
   remote->sin_port = htons(80);
   remote->sin_addr.s_addr = inet_addr(ip);
