@@ -17,7 +17,7 @@ SRC_DIRS = \
 TEST_SRC_DIRS = \
 	.\
 	mocks\
-	tests/tempodb\
+	tests/TempoDb\
 	tests\
 
 
