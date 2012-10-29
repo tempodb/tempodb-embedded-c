@@ -50,4 +50,7 @@ objs/base64.o:
 objs/tempodb.o:
 	$(CC) -c -I include/tempodb -o objs/tempodb.o src/tempodb/tempodb.c
 
+CppUTest/lib/libCppUTest.a:
+	cd CppUTest && make lib/libCppUTest.a
+
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk

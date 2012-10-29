@@ -19,6 +19,8 @@ INCLUDE_DIRS =\
 
 CPPUTEST_LIB_DIR = lib
 
+CPPUTEST_WARNINGFLAGS = ""
+
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk
 
 #these are a sample of the other alternative flag settings
