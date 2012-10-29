@@ -1,5 +1,5 @@
 #Set this to @ to keep the makefile quiet
-SILENCE = @
+#SILENCE = @
 
 #--- Inputs ----#
 COMPONENT_NAME = CppUTest
@@ -16,6 +16,10 @@ TEST_SRC_DIRS = \
 
 INCLUDE_DIRS =\
   include
+
+CPPUTEST_LIB_DIR = lib
+
+CPPUTEST_WARNINGFLAGS = NONE
 
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk
 

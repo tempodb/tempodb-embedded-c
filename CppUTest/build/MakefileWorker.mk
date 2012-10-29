@@ -90,12 +90,12 @@ endif
 
 # Default dir for temporary files (d, o)
 ifndef CPPUTEST_OBJS_DIR
-    CPPUTEST_OBJS_DIR = objs
+    CPPUTEST_OBJS_DIR = objs/test
 endif
 
 # Default dir for the outout library
 ifndef CPPUTEST_LIB_DIR
-    CPPUTEST_LIB_DIR = lib
+    CPPUTEST_LIB_DIR = lib/test
 endif
 
 # No map by default
@@ -144,7 +144,9 @@ ifeq ($(CPPUTEST_USE_GCOV), Y)
 	CPPUTEST_CPPFLAGS += -fprofile-arcs -ftest-coverage
 endif
 
-CPPUTEST_CPPFLAGS += $(CPPUTEST_WARNINGFLAGS)
+ifneq ($(CPPUTEST_WARNINGFLAGS), NONE)
+  CPPUTEST_CPPFLAGS += $(CPPUTEST_WARNINGFLAGS)
+endif
 CPPUTEST_CXXFLAGS += $(CPPUTEST_MEMLEAK_DETECTOR_NEW_MACRO_FILE)
 CPPUTEST_CFLAGS += $(CPPUTEST_MEMLEAK_DETECTOR_MALLOC_MACRO_FILE)
 
@@ -251,12 +253,8 @@ LDFLAGS = $(CPPUTEST_LDFLAGS) $(CPPUTEST_ADDITIONAL_LDFLAGS)
 
 # Targets
 
-.PHONY: all
-all: start $(TEST_TARGET)  
-	$(RUN_TEST_TARGET)	
-
 .PHONY: start
-start: $(TEST_TARGET) 
+start: $(TEST_TARGET)
 	$(SILENCE)START_TIME=$(call time)
 
 .PHONY: all_no_tests
@@ -290,10 +288,10 @@ $(TARGET_LIB): $(OBJ)
 	$(SILENCE)ranlib $@
 
 test: $(TEST_TARGET)
-	$(RUN_TEST_TARGET) | tee $(TEST_OUTPUT)
+	$(RUN_TEST_TARGET)
 	
 vtest: $(TEST_TARGET)
-	$(RUN_TEST_TARGET) -v  | tee $(TEST_OUTPUT)
+	$(RUN_TEST_TARGET) -v
 
 $(CPPUTEST_OBJS_DIR)/%.o: %.cpp
 	@echo compiling $(notdir $<)
