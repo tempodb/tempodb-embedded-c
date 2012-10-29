@@ -1,5 +1,4 @@
 language: cpp
 compiler:
   - gcc
-  - clang
-script: cd CppUTest && make && cd .. && make vtest
+script: cd CppUTest && make && echo "Done building CppUTest" && cd .. && make vtest
