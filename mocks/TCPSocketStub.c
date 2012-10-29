@@ -73,10 +73,6 @@ void set_test_response(const char *buffer) {
   response_buffer_bytes_sent = 0;
 }
 
-const char * test_ip(void) {
-  return "1.2.3.4";
-}
-
 void test_init(void) {
   int inet_pton_result;
 
@@ -84,15 +80,15 @@ void test_init(void) {
   last_request = malloc(last_request_size + 1);
   memset(last_request, 0, last_request_size + 1);
 
-  inet_pton_result = inet_pton(AF_INET, test_ip(), inet_ips);
+  inet_pton_result = inet_pton(AF_INET, "1.2.3.4", inet_ips);
   if (inet_pton_result == 0) {
-    printf("Invalid IP for testing: %s\n", test_ip());
+    printf("Invalid IP for testing: %s\n", "1.2.3.4");
     exit(1);
   } else if (inet_pton_result == -1) {
     perror("Invalid address class");
     exit(1);
   }
-  hent = (struct hostent *)malloc(sizeof(struct hostent *));
+  hent = (struct hostent *)malloc(sizeof(struct hostent));
 
   response_buffer = malloc(response_buffer_size + 1);
   memset(response_buffer, 0, response_buffer_size + 1);
