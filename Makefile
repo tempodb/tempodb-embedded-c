@@ -36,11 +36,13 @@ CPPUTEST_WARNINGFLAGS = -Wall -Wswitch-default -Werror
 CPPUTEST_CFLAGS += -Wall -Wstrict-prototypes -pedantic
 LD_LIBRARIES = -lpthread
 
-STUFF_TO_CLEAN += objs/* objs/src/tempodb/* objs/tests/* objs/mocks/* objs/tests/tempodb/* lib/libtempodb.a
+STUFF_TO_CLEAN += objs/*.o objs/platform/*.o objs/src/tempodb/* objs/tests/* objs/mocks/* objs/tests/tempodb/* lib/libtempodb*.a
 
 CC = cc
 
-all: lib/libtempodb_posix.a
+all: posix
+
+posix: lib/libtempodb_posix.a
 
 lib/libtempodb_posix.a: objs/base64.o objs/tempodb.o objs/platform/posix.o
 	ar rv lib/libtempodb_posix.a objs/base64.o objs/tempodb.o objs/platform/posix.o
