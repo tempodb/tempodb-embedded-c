@@ -40,16 +40,19 @@ STUFF_TO_CLEAN += objs/* objs/src/tempodb/* objs/tests/* objs/mocks/* objs/tests
 
 CC = cc
 
-all: lib/libtempodb.a
+all: lib/libtempodb_posix.a
 
-lib/libtempodb.a: objs/base64.o objs/tempodb.o
-	ar rv lib/libtempodb.a objs/base64.o objs/tempodb.o
+lib/libtempodb_posix.a: objs/base64.o objs/tempodb.o objs/platform/posix.o
+	ar rv lib/libtempodb_posix.a objs/base64.o objs/tempodb.o objs/platform/posix.o
 
 objs/base64.o:
 	$(CC) -c -I include/tempodb -o objs/base64.o src/tempodb/base64.c
 
 objs/tempodb.o:
 	$(CC) -c -I include/tempodb -o objs/tempodb.o src/tempodb/tempodb.c
+
+objs/platform/posix.o:
+	$(CC) -c -I include/tempodb -o objs/platform/posix.o src/tempodb/platform/posix.c
 
 CppUTest/lib/libCppUTest.a:
 	cd CppUTest && make lib/libCppUTest.a
