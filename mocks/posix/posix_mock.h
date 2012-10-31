@@ -1,5 +1,5 @@
-#ifndef TCPSocketStub_H
-#define TCPSocketStub_H
+#ifndef TEMPODB_PLATFORM_POSIX_MOCK_H
+#define TEMPODB_PLATFORM_POSIX_MOCK_H
 
 #include <arpa/inet.h>
 #include <netdb.h>

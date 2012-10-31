@@ -3,6 +3,13 @@
 #Set this to @ to keep the makefile quiet
 SILENCE = @
 
+ifdef PLATFORM
+	COMPONENT_NAME = "$(PLATFORM)_"
+	SRC_FILES = src/tempodb/platform/$(PLATFORM).c
+	TEST_SRC_FILES = tests/TempoDb/platform/$(PLATFORM)_test.c
+	MOCKS_SRC_DIRS = mocks/$(PLATFORM)
+endif
+
 #---- Outputs ----#
 COMPONENT_NAME = tempodb
 
@@ -11,16 +18,14 @@ CPPUTEST_HOME = CppUTest
 CPP_PLATFORM = Gcc
 PROJECT_HOME_DIR = .
 
-SRC_DIRS = \
-	src/tempodb\
-	src/tempodb/platform
+SRC_DIRS += \
+	src/tempodb
 
-TEST_SRC_DIRS = \
+TEST_SRC_DIRS += \
 	.\
 	mocks\
 	tests/TempoDb\
-	tests\
-
+	tests
 
 INCLUDE_DIRS =\
   .\
@@ -28,8 +33,8 @@ INCLUDE_DIRS =\
   mocks\
 	include/tempodb
 
-MOCKS_SRC_DIRS = \
-	mocks\
+MOCKS_SRC_DIRS += \
+	mocks
 
 CPPUTEST_WARNINGFLAGS = -Wall -Wswitch-default -Werror
 #CPPUTEST_CFLAGS = -std=c89
@@ -58,5 +63,12 @@ objs/platform/posix.o:
 
 CppUTest/lib/libCppUTest.a:
 	cd CppUTest && make lib/libCppUTest.a
+
+vtest_posix:
+	$(SILENCE)echo ">>> Running Posix Tests"
+	$(SILENCE)PLATFORM="posix" make vtest_platform
+	$(SILENCE)echo "<<< Finished Posix Tests"
+
+vtest: vtest_posix
 
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk

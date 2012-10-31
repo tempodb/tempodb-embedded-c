@@ -4,7 +4,7 @@ extern "C" {
 #include "tempodb.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "TCPSocketStub.h"
+#include "posix_mock.h"
 #include <string.h>
 }
 

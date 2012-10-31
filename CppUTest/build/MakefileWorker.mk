@@ -192,7 +192,7 @@ OBJ = $(call src_to_o,$(SRC))
 
 STUFF_TO_CLEAN += $(OBJ)
 
-TEST_SRC = $(call get_src_from_dir_list, $(TEST_SRC_DIRS))
+TEST_SRC = $(call get_src_from_dir_list, $(TEST_SRC_DIRS)) $(TEST_SRC_FILES)
 TEST_OBJS = $(call src_to_o,$(TEST_SRC))
 STUFF_TO_CLEAN += $(TEST_OBJS)
 
@@ -287,10 +287,10 @@ $(TARGET_LIB): $(OBJ)
 	$(SILENCE)$(AR) $(ARFLAGS) $@ $^
 	$(SILENCE)ranlib $@
 
-test: $(TEST_TARGET)
+test_platform: $(TEST_TARGET)
 	$(RUN_TEST_TARGET)
 	
-vtest: $(TEST_TARGET)
+vtest_platform: $(TEST_TARGET)
 	$(RUN_TEST_TARGET) -v
 
 $(CPPUTEST_OBJS_DIR)/%.o: %.cpp

@@ -1,4 +1,4 @@
-#include "TCPSocketStub.h"
+#include "posix_mock.h"
 #include <stdio.h>
 
 static struct hostent *hent;
