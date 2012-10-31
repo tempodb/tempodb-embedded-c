@@ -1,5 +1,5 @@
-tempodb_tests
-tempodb_tests.txt
+*tempodb_tests
+*tempodb_tests.txt
 lib/*.a
 lib/test/*.a
 objs/*

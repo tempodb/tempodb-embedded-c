@@ -4,14 +4,15 @@
 SILENCE = @
 
 ifdef PLATFORM
-	COMPONENT_NAME = "$(PLATFORM)_"
+	COMPONENT_NAME = $(PLATFORM)_tempodb
 	SRC_FILES = src/tempodb/platform/$(PLATFORM).c
 	TEST_SRC_FILES = tests/TempoDb/platform/$(PLATFORM)_test.c
 	MOCKS_SRC_DIRS = mocks/$(PLATFORM)
+else
+  COMPONENT_NAME = tempodb
+	TEST_SRC_FILES = tests/TempoDb/tempodb_test.c
+	MOCKS_SRC_DIRS = mocks
 endif
-
-#---- Outputs ----#
-COMPONENT_NAME = tempodb
 
 #--- Inputs ----#
 CPPUTEST_HOME = CppUTest
@@ -23,8 +24,6 @@ SRC_DIRS += \
 
 TEST_SRC_DIRS += \
 	.\
-	mocks\
-	tests/TempoDb\
 	tests
 
 INCLUDE_DIRS =\
@@ -33,15 +32,12 @@ INCLUDE_DIRS =\
   mocks\
 	include/tempodb
 
-MOCKS_SRC_DIRS += \
-	mocks
-
 CPPUTEST_WARNINGFLAGS = -Wall -Wswitch-default -Werror
 #CPPUTEST_CFLAGS = -std=c89
 CPPUTEST_CFLAGS += -Wall -Wstrict-prototypes -pedantic
 LD_LIBRARIES = -lpthread
 
-STUFF_TO_CLEAN += objs/*.o objs/platform/*.o objs/src/tempodb/* objs/tests/* objs/mocks/* objs/tests/tempodb/* lib/libtempodb*.a
+STUFF_TO_CLEAN += objs/*.o objs/platform/*.o objs/src/tempodb/* objs/tests/* objs/mocks/* objs/tests/tempodb/* lib/libtempodb*.a *tempodb_tests
 
 CC = cc
 
@@ -69,6 +65,12 @@ vtest_posix:
 	$(SILENCE)PLATFORM="posix" make vtest_platform
 	$(SILENCE)echo "<<< Finished Posix Tests"
 
-vtest: vtest_posix
+vtest_common:
+	$(SILENCE)echo ">>> Running TempoDB Tests"
+	$(SILENCE)make vtest_platform
+	$(SILENCE)echo "<<< Finished TempoDB Tests"
+
+
+vtest: vtest_common vtest_posix
 
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk

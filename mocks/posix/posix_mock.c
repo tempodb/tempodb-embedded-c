@@ -10,7 +10,6 @@ static size_t response_buffer_bytes_sent;
 char *response_buffer;
 char *response_buffer_remaining;
 
-
 static int last_request_size = 1024;
 
 int socket(int domain, int type, int protocol) {
