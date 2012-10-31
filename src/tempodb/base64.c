@@ -60,7 +60,7 @@ char *encode_base64(int size, unsigned char *src) {
   if(!size)
     size= strlen((char *)src);
     
-  out= malloc(sizeof(char) * size*4/3+4);
+  out= malloc(sizeof(char) * size*4/3+4 + 1);
 
   p= out;
     
@@ -97,6 +97,7 @@ char *encode_base64(int size, unsigned char *src) {
     }
 
   }
+  *p++ = '\0';
 
   return out;
 

@@ -1,11 +1,10 @@
-tempodb_tests
-tempodb_tests.txt
-lib/libtempodb.a
-lib/test/libtempodb.a
+*tempodb_tests
+*tempodb_tests.txt
+lib/*.a
+lib/test/*.a
 objs/*
 a.out
 examples/example-authed.c
 CppUTest/CppUTest_tests
-CppUTest/lib/libCppUTest.a
-CppUTest/lib/libCppUTestExt.a
+CppUTest/lib/*.a
 CppUTest/objs

@@ -10,15 +10,22 @@
 #define TEMPODB_POST "POST"
 
 typedef struct tempodb_config tempodb_config;
+typedef struct tempodb_platform_config tempodb_platform_config;
 typedef struct tempodb_bulk_update tempodb_bulk_update;
 
 enum id_or_key {TEMPODB_ID, TEMPODB_KEY};
 
-struct tempodb_bulk_update{
+struct tempodb_bulk_update {
   const char *series;
   enum id_or_key type;
   float value;
 };
+
+/* defined by platform-specific files */
+tempodb_platform_config * tempodb_platform_create(void);
+int tempodb_platform_destroy(tempodb_platform_config *config);
+int tempodb_platform_send(tempodb_platform_config *config, const char *command);
+int tempodb_platform_read_response(tempodb_platform_config *config, char *buffer, const int buffer_size);
 
 tempodb_config * tempodb_create(const char *key, const char *secret);
 void tempodb_destroy(tempodb_config *config);

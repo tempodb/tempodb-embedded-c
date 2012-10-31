@@ -1,4 +1,4 @@
-#include "TCPSocketStub.h"
+#include "posix_mock.h"
 #include <stdio.h>
 
 static struct hostent *hent;
@@ -9,7 +9,6 @@ static size_t response_buffer_size = 1024;
 static size_t response_buffer_bytes_sent;
 char *response_buffer;
 char *response_buffer_remaining;
-
 
 static int last_request_size = 1024;
 
