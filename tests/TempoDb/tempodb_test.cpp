@@ -135,7 +135,7 @@ TEST(tempodb, BuildQuery_IncludesUserAgent)
   tempodb_config *config = tempodb_create("my_access_key", "my_secret_key");
   char *buffer = (char *)malloc(255);
   tempodb_build_query(config, buffer, 255, "GET", "/a/path", "");
-  STRCMP_CONTAINS("\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\n", buffer);
+  STRCMP_CONTAINS("\r\nUser-Agent: tempodb-embedded-c/1.0.1\r\n", buffer);
   free(buffer);
   tempodb_destroy(config);
 }
