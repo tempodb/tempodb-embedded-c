@@ -41,7 +41,7 @@ void tempodb_build_query(tempodb_config *config, char *buffer, const size_t buff
   snprintf(access_credentials, strlen(config->access_key) + strlen(config->access_secret) + 2, "%s:%s", config->access_key, config->access_secret);
   encoded_credentials = encode_base64(strlen(access_credentials), (unsigned char *)access_credentials);
 
-  snprintf(buffer, buffer_size, "%s %s HTTP/1.0\r\nAuthorization: Basic %s\r\nUser-Agent: tempodb-embedded-c/1.0.0\r\nHost: %s\r\nContent-Length: %lu\r\nContent-Type: application/json\r\n\r\n%s", verb, path, encoded_credentials, DOMAIN, (unsigned long)strlen(payload), payload);
+  snprintf(buffer, buffer_size, "%s %s HTTP/1.0\r\nAuthorization: Basic %s\r\nUser-Agent: tempodb-embedded-c/1.0.1\r\nHost: %s\r\nContent-Length: %lu\r\nContent-Type: application/json\r\n\r\n%s", verb, path, encoded_credentials, DOMAIN, (unsigned long)strlen(payload), payload);
   free(encoded_credentials);
 }
 
