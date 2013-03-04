@@ -40,6 +40,12 @@ int tempodb_platform_read_response(tempodb_platform_config *config, char *buffer
   return 0;
 }
 
+void tempodb_platform_open_socket(tempodb_platform_config *config) {
+}
+
+void tempodb_platform_close_socket(tempodb_platform_config *config) {
+}
+
 void set_test_response(const char *buffer) {
   strncpy(response_buffer, buffer, response_buffer_size);
 }

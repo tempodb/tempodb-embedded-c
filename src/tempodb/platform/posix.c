@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 static int tempodb_create_socket(void);
 static struct sockaddr_in * tempodb_addr(void);
@@ -15,7 +16,6 @@ struct tempodb_platform_config {
 
 tempodb_platform_config * tempodb_platform_create(void) {
   tempodb_platform_config *config = (tempodb_platform_config *)malloc(sizeof(tempodb_platform_config));
-  config->sock = tempodb_create_socket();
   return config;
 }
 
@@ -23,6 +23,14 @@ int tempodb_platform_destroy(tempodb_platform_config *config)
 {
   free(config);
   return 0;
+}
+
+void tempodb_platform_open_socket(tempodb_platform_config *config) {
+  config->sock = tempodb_create_socket();
+}
+
+void tempodb_platform_close_socket(tempodb_platform_config *config) {
+  close(config->sock);
 }
 
 int tempodb_platform_read_response(tempodb_platform_config *config, char *buffer, const int buffer_size) {

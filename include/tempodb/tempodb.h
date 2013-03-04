@@ -26,6 +26,8 @@ tempodb_platform_config * tempodb_platform_create(void);
 int tempodb_platform_destroy(tempodb_platform_config *config);
 int tempodb_platform_send(tempodb_platform_config *config, const char *command);
 int tempodb_platform_read_response(tempodb_platform_config *config, char *buffer, const int buffer_size);
+void tempodb_platform_open_socket(tempodb_platform_config *config);
+void tempodb_platform_close_socket(tempodb_platform_config *config);
 
 tempodb_config * tempodb_create(const char *key, const char *secret);
 void tempodb_destroy(tempodb_config *config);

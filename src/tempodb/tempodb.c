@@ -140,9 +140,12 @@ int tempodb_write_by_path(tempodb_config *config, const char *path, const float 
 }
 
 int tempodb_write(tempodb_config *config, const char *query_buffer, char *response_buffer, const ssize_t response_buffer_size) {
-  int status = tempodb_platform_send(config->platform_config, query_buffer);
+  int status;
+  tempodb_platform_open_socket(config->platform_config);
+  status = tempodb_platform_send(config->platform_config, query_buffer);
   if (status != -1) {
     status = tempodb_platform_read_response(config->platform_config, response_buffer, response_buffer_size);
   }
+  tempodb_platform_close_socket(config->platform_config);
   return status;
 }
